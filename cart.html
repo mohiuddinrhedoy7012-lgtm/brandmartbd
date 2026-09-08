@@ -1,0 +1,355 @@
+<script>
+
+function loadCart() {
+
+    const cartItems = JSON.parse(
+        localStorage.getItem("cartItems") || "[]"
+    );
+
+    const container = document.getElementById("cart-container");
+
+    if (cartItems.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                <h2>আপনার কার্ট খালি 🛒</h2>
+                <p>কিছু পণ্য কার্টে যোগ করুন।</p>
+
+                <button
+                    class="checkout"
+                    onclick="location.href='/index.html'">
+                    কেনাকাটা করুন
+                </button>
+            </div>
+        `;
+
+        return;
+    }
+
+    let total = 0;
+
+    container.innerHTML = cartItems.map((product, index) => {
+
+        // নতুন object format
+        const name = product.name || "";
+        const price = Number(product.price) || 0;
+        const quantity = Number(product.quantity) || 1;
+
+        const itemTotal = price * quantity;
+
+        total += itemTotal;
+
+        return `
+            <div class="cart-item">
+
+                <div>
+                    <div class="product-name">
+                        ${name}
+                    </div>
+
+                    <div class="price">
+                        ৳ ${itemTotal.toLocaleString()}
+                    </div>
+
+                    <div>
+                        পরিমাণ: ${quantity}
+                    </div>
+                </div>
+
+                <button
+                    class="remove"
+                    onclick="removeItem(${index})">
+                    Remove
+                </button>
+
+            </div>
+        `;
+
+    }).join("");
+
+    container.innerHTML += `
+        <div class="total-box">
+
+            <div class="total">
+                মোট: ৳ ${total.toLocaleString()}
+            </div>
+
+            <button
+                class="checkout"
+                onclick="checkout()">
+                Checkout
+            </button>
+
+        </div>
+    `;
+}
+
+
+function removeItem(index) {
+
+    let cartItems = JSON.parse(
+        localStorage.getItem("cartItems") || "[]"
+    );
+
+    cartItems.splice(index, 1);
+
+    localStorage.setItem(
+        "cartItems",
+        JSON.stringify(cartItems)
+    );
+
+    loadCart();
+}
+
+
+function checkout() {
+
+    window.location.href = "/checkout.html";
+
+}
+
+
+loadCart();
+
+</script><!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>আপনার কার্ট - brandmartbd.com</title>
+  <style>
+    :root {
+      --orange: #f85606;
+      --dark: #252525;
+      --bg: #f5f5f5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+    }
+
+    header {
+      background: white;
+      padding: 16px 9%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: var(--orange);
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #fafafa;
+    }
+
+    .item-img {
+      font-size: 24px;
+      margin-right: 8px;
+    }
+
+    .qty-btn {
+      padding: 4px 10px;
+      border: 1px solid #ccc;
+      background: #f0f0f0;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .remove-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .total-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn-checkout {
+      background: var(--orange);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-shopping {
+      background: #777;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .empty-msg {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/index.html" class="logo">brandmartbd.com</a>
+    <a href="/index.html" style="text-decoration:none; color:var(--orange); font-weight:bold;">← আরও কেনাকাটা করুন</a>
+  </header>
+
+  <main class="container">
+    <h2>আপনার শপিং কার্ট</h2>
+
+    <div id="cart-content">
+      <table>
+        <thead>
+          <tr>
+            <th>পণ্য</th>
+            <th>মূল্য</th>
+            <th>পরিমাণ</th>
+            <th>মোট</th>
+            <th>মুছুন</th>
+          </tr>
+        </thead>
+        <tbody id="cart-table-body">
+          <!-- পণ্যগুলো এখানে জাভাস্ক্রিপ্ট দিয়ে লোড হবে -->
+        </tbody>
+      </table>
+
+      <div class="total-area">
+        <span>সর্বমোট টাকা:</span>
+        <span id="grand-total">৳ 0</span>
+      </div>
+
+      <div class="action-btns">
+        <a href="/index.html" class="btn-shopping">আরও কিনুন</a>
+        <a href="/checkout.html" class="btn-checkout">চেকআউট করুন</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const tbody = document.getElementById('cart-table-body');
+      const cartContent = document.getElementById('cart-content');
+      let grandTotal = 0;
+
+      if (cart.length === 0) {
+        cartContent.innerHTML = `
+          <div class="empty-msg">
+            <p>আপনার কার্ট বর্তমানে খালি আছে!</p>
+            <br>
+            <a href="/index.html" class="btn-shopping">কেনাকাটা শুরু করুন</a>
+          </div>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = '';
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        grandTotal += itemTotal;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><span class="item-img">${item.img || ''}</span> ${item.name}</td>
+          <td>৳ ${item.price.toLocaleString()}</td>
+          <td>
+            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+            <span style="margin: 0 8px;">${item.quantity}</span>
+            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+          </td>
+          <td>৳ ${itemTotal.toLocaleString()}</td>
+          <td><button class="remove-btn" onclick="removeItem(${index})">মুছুন</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      document.getElementById('grand-total').textContent = '৳ ' + grandTotal.toLocaleString();
+    }
+
+    function updateQty(index, change) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart[index].quantity += change;
+
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+
+    // পেজ লোড হলে কার্ট চালু করা
+    loadCart();
+  </script>
+</body>
+</html>

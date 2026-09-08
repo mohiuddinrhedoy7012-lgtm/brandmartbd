@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>চেকআউট - brandmartbd.com</title>
+  <style>
+    :root {
+      --orange: #f85606;
+      --dark: #252525;
+      --bg: #f5f5f5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+    }
+
+    header {
+      background: white;
+      padding: 16px 9%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: var(--orange);
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      padding: 0 15px;
+    }
+
+    .box {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+      color: var(--orange);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed #eee;
+      font-size: 14px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 15px;
+    }
+
+    .grand-total {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--orange);
+      border-top: 2px solid #eee;
+      padding-top: 12px;
+      margin-top: 15px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn-submit:hover {
+      background: #d84600;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/index.html" class="logo">brandmartbd.com</a>
+    <a href="/cart.html" style="text-decoration:none; color:var(--orange); font-weight:bold;">← কার্টে ফিরে যান</a>
+  </header>
+
+  <main class="container">
+    <!-- ডেলিভারি তথ্য ফর্ম -->
+    <div class="box">
+      <h2>ডেলিভারি ঠিকানা ও তথ্য</h2>
+      <form id="checkout-form" onsubmit="handleCheckout(event)">
+        <div class="form-group">
+          <label for="name">আপনার পুরো নাম *</label>
+          <input type="text" id="name" required placeholder="উদাঃ মোঃ আরিফুল ইসলাম" />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">মোবাইল নম্বর *</label>
+          <input type="tel" id="phone" required placeholder="উদাঃ 017XXXXXXXX" />
+        </div>
+
+        <div class="form-group">
+          <label for="address">ডেলিভারির সম্পূর্ণ ঠিকানা *</label>
+          <textarea id="address" required placeholder="বাড়ি নম্বর, রোড, এলাকা, থানা, জেলা"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="payment">পেমেন্ট পদ্ধতি *</label>
+          <select id="payment" required>
+            <option value="">পেমেন্ট নির্বাচন করুন</option>
+            <option value="cod">ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে মূল্য পরিশোধ)</option>
+            <option value="bkash">বিকাশ (bKash)</option>
+            <option value="nagad">নগদ (Nagad)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit">অর্ডার নিশ্চিত করুন</button>
+      </form>
+    </div>
+
+    <!-- অর্ডারের বিবরণী -->
+    <div class="box">
+      <h2>অর্ডার বিবরণী</h2>
+      <div id="order-items"></div>
+
+      <div class="price-row">
+        <span>সাবটোটাল:</span>
+        <span id="subtotal">৳ 0</span>
+      </div>
+      <div class="price-row">
+        <span>ডেলিভারি চার্জ:</span>
+        <span>৳ ৬০</span>
+      </div>
+      <div class="price-row grand-total">
+        <span>সর্বমোট প্রদেয় বিল:</span>
+        <span id="total-bill">৳ 0</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const deliveryCharge = 60;
+
+    function renderOrderSummary() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const orderItemsDiv = document.getElementById('order-items');
+      let subtotal = 0;
+
+      if (cart.length === 0) {
+        alert('আপনার কার্ট খালি! কেনাকাটা করতে হোমপেজে যান।');
+        window.location.href = '/index.html';
+        return;
+      }
+
+      orderItemsDiv.innerHTML = '';
+
+      cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+
+        const row = document.createElement('div');
+        row.className = 'order-item';
+        row.innerHTML = `
+          <span>${item.name} × ${item.quantity}</span>
+          <span>৳ ${itemTotal.toLocaleString()}</span>
+        `;
+        orderItemsDiv.appendChild(row);
+      });
+
+      document.getElementById('subtotal').textContent = '৳ ' + subtotal.toLocaleString();
+      document.getElementById('total-bill').textContent = '৳ ' + (subtotal + deliveryCharge).toLocaleString();
+    }
+
+    function handleCheckout(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const payment = document.getElementById('payment').value;
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalAmount = document.getElementById('total-bill').textContent;
+
+      const orderData = {
+        orderId: 'BM-' + Math.floor(100000 + Math.random() * 900000),
+        customer: { name, phone, address, payment },
+        items: cart,
+        total: totalAmount,
+        date: new Date().toLocaleString('bn-BD')
+      };
+
+      // হিস্ট্রির জন্য সংরক্ষণ
+      let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      allOrders.push(orderData);
+      localStorage.setItem('orders', JSON.stringify(allOrders));
+
+      // কার্ট খালি করে দেওয়া
+      localStorage.removeItem('cart');
+
+      // কনফার্মেশন স্ক্রিন রেন্ডার করা
+      document.querySelector('main.container').innerHTML = `
+        <div class="box" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
+          <div style="font-size: 60px; color: #2ecc71; margin-bottom: 15px;">✔</div>
+          <h2 style="border: none; margin-bottom: 10px;">অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!</h2>
+          <p style="font-size: 16px; color: #555; margin-bottom: 8px;">অর্ডার আইডি: <strong>${orderData.orderId}</strong></p>
+          <p style="color: #666; margin-bottom: 25px;">ধন্যবাদ <strong>${name}</strong>, খুব শীঘ্রই (${phone}) নম্বরে কল করে অর্ডার নিশ্চিত করা হবে।</p>
+          <a href="/index.html" style="background: var(--orange); color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">হোমপেজে ফিরে যান</a>
+        </div>
+      `;
+    }
+
+    renderOrderSummary();
+  </script>
+</body>
+</html>
